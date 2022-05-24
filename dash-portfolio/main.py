@@ -6,35 +6,55 @@ import plotly.express as px
 import pandas as pd
 
 app = Dash(__name__)
-
+colors = {"background": "#000000", "text": "#6402c7"}
 # assume you have a "long-form" data frame
 # see https://plotly.com/python/px-arguments/ for more options
-df = pd.DataFrame({
-    "Fruit": ["Apples", "Oranges", "Pears", "Apples", "Oranges", "Pears"],
-    "Amount": [4, 1, 2, 2, 4, 5],
-    "City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]
-})
-
-fig = px.bar(df, x="Fruit", y="Amount", color="City", barmode="group")
-
-achivements= [{'name' : 'promotion' , 'date' : '2022-02-24'} ,
-              {'name' : 'highschool graduation', 'date' : '2021-02-25'}]
-
-achivement_df = pd.DataFrame(achivements)
-
-achivement_df['y_axis'] = 1
 
 
+achievements = [{'name': 'promotion', 'date': '2022-02-24'},
+                {'name': 'highschool graduation', 'date': '2021-02-25'}]
 
-fig = px.scatter(achivement_df, x="date", y="y_axis", text="name" ,)
+achievement_df = pd.DataFrame(achievements)
 
-fig.update_traces(textposition = "top center" , marker = {"symbol" : 'star', 'size' : 50 , "color" : "gold"})
+achievement_df['y_axis'] = 1
 
-fig.update_yaxes(visible=False)
+achievement_fig = px.scatter(achievement_df, x="date", y="y_axis", text="name",
+                             title="Achievements in chronological order")
 
-app.layout = html.Div(children=[
-    html.H1(children='Juandaniel Portfolio', style={'textAlign': 'center' }),
+achievement_fig.update_traces(textposition="top center", marker={"symbol": 'star', 'size': 50, "color": "purple"})
 
+achievement_fig.update_yaxes(visible=False)
+
+skills = [
+    {'name': 'Python', 'months': 2},
+    {'name': 'Data viz', 'months': 1},
+    {'name': 'Git', 'months': 2}
+]
+
+skills_df = pd.DataFrame(skills)
+
+skills_df.sort_values(by='months', ascending=True, inplace=True)
+
+skills_fig = px.bar(skills_df, x="months", y="name", orientation='h',
+                    title="Skills")
+
+achievement_fig.update_layout(
+    plot_bgcolor=colors['background'],
+    paper_bgcolor=colors['background'],
+    font_color=colors['text'])
+
+skills_fig.update_layout(
+    plot_bgcolor=colors['background'],
+    paper_bgcolor=colors['background'],
+    font_color=colors['text'])
+
+app_components = [
+    html.H1(children='Juandaniel Portfolio',
+            style={'color': colors['text'],
+                   'backgroundColor': colors['background'],
+                   'textAlign': 'center',
+
+                   }),
 
     html.Div(children='''
         Dash: A web application framework for your data.
@@ -42,9 +62,12 @@ app.layout = html.Div(children=[
 
     dcc.Graph(
         id='example-graph',
-        figure=fig
-    )
-])
+        figure=achievement_fig
+    ),
+    dcc.Graph(id='skills-fig-id', figure=skills_fig)
+]
+
+app.layout = html.Div(children=app_components, style={'backgroundColor': colors['background']})
 
 if __name__ == '__main__':
     app.run_server(debug=True)
