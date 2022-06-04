@@ -1,6 +1,6 @@
 import PySimpleGUI as sg
 #list of students
-list_of_students = ['Crash Overload', 'Cereal Killer', 'Zero cool','john']
+list_of_students = ['Crash Overload', 'Cereal Killer', 'Zero cool','John']
 
 sg.theme('DarkAmber')   # Add a touch of color
 layout = [[sg.Text("Header")]]
